@@ -38,8 +38,12 @@
         state: started
         enabled: yes
 
-    - name: Check Python app
-      shell: curl 127.0.0.1:5000
+    - name: Check Python app port
+      uri: 
+        url: http://127.0.0.1:5000
+
+    - name: Allow connections from nginx to python app
+      shell: setsebool -P httpd_can_network_connect 1
       
     - name: Start Nginx
       service:
@@ -47,6 +51,7 @@
         state: started
         enabled: yes
 
-    - name: Check app
-      shell: curl 127.0.0.1:80
+    - name: Check nginx port
+      uri: 
+        url: http://127.0.0.1:80
     
