@@ -34,7 +34,7 @@
 
     - name: Start python app
       service:
-        name: nginx
+        name: application
         state: started
         enabled: yes
 
