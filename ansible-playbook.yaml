@@ -1,0 +1,52 @@
+---
+- name:  Configure CentOS 7
+  hosts: localhost
+  connection: local
+  become: yes
+
+  tasks:
+    - name: Install needed packages
+      yum:
+        state: present
+        name:
+          - epel-release
+          - nginx
+          - gcc
+          - gcc-c++
+          - kernel-devel
+          - make
+
+    - name: Activate Python Environment
+      shell: | 
+        cd /home/appuser
+        source ve-app/bin/activate
+        cd /home/ve-app/
+        pip install uwsgi
+
+    - name: Copy config files
+      template:
+         src: "{{ item.src }}"
+         dest: "{{ item.dest }}"
+         owner: root
+      with_items:
+          - { src: ./configs/application.service, dest: /etc/systemd/system/application.service }
+          - { src: ./configs/nginx.conf, dest: /etc/nginx/nginx.conf } 
+
+    - name: Start python app
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Check Python app
+      shell: curl 127.0.0.1:5000
+      
+    - name: Start Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Check app
+      shell: curl 127.0.0.1:80
+    

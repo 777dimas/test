@@ -1,0 +1,8 @@
+[Unit]
+Description=uwsgi application
+
+[Service]
+ExecStart=/usr/bin/bash -c 'cd /home/appuser/; source ve-app/bin/activate; cd /home/appuser/app; python3 application.py'
+
+[Install]
+WantedBy=multi-user.target
